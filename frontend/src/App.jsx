@@ -1,9 +1,11 @@
+
 /**
  * NASA Space Apps Challenge - Junior Astronaut Mission Trainer
  * App.jsx: Main application shell, state management, and screen coordinator.
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+
 import { HomeScreen } from './screens/HomeScreen.jsx';
 import { MissionSelectScreen } from './screens/MissionSelectScreen.jsx';
 import { DashboardScreen } from './screens/DashboardScreen.jsx';
@@ -14,6 +16,8 @@ import { Header } from './components/Header.jsx';
 import { Footer } from './components/Footer.jsx';
 import { StarryBackground } from './components/StarryBackground.jsx';
 
+import { checkBackendConnection } from './utils/api.js';
+
 import {
   startMission,
   applyDecision,
@@ -21,17 +25,21 @@ import {
   nextDay,
   calculateScore
 } from './gameLogic.js';
+
 import { soundManager } from './utils/soundEffects.js';
 
 export function App() {
-  // Screen state: 'home' | 'missionSelect' | 'dashboard' | 'emergency' | 'results'
   const [currentScreen, setCurrentScreen] = useState('home');
-
-  // Simulation state
   const [gameState, setGameState] = useState(null);
-
-  // Audio preference
   const [soundMuted, setSoundMuted] = useState(false);
+  const [backendStatus, setBackendStatus] = useState('checking');
+
+  // Check backend connection
+  useEffect(() => {
+    checkBackendConnection()
+      .then(() => setBackendStatus('connected'))
+      .catch(() => setBackendStatus('disconnected'));
+  }, []);
 
   // Navigate to mission selection
   const handleGoToMissionSelect = () => {
@@ -48,6 +56,7 @@ export function App() {
   // Execute daily tactical decision
   const handleApplyDecision = (decisionId, optionId) => {
     if (!gameState) return;
+
     const updated = applyDecision(gameState, decisionId, optionId);
 
     if (updated.status === 'failed') {
@@ -55,6 +64,7 @@ export function App() {
         ...updated,
         scoreData: calculateScore(updated)
       };
+
       setGameState(scoredState);
       setCurrentScreen('results');
       return;
@@ -66,6 +76,7 @@ export function App() {
   // Resolve emergency challenge
   const handleResolveEmergency = (emergencyId, optionId) => {
     if (!gameState) return;
+
     const updated = resolveEmergency(gameState, emergencyId, optionId);
 
     if (updated.status === 'failed') {
@@ -73,12 +84,14 @@ export function App() {
         ...updated,
         scoreData: calculateScore(updated)
       };
+
       setGameState(scoredState);
       setCurrentScreen('results');
       return;
     }
 
     setGameState(updated);
+
     if (currentScreen === 'emergency') {
       setCurrentScreen('dashboard');
     }
@@ -87,6 +100,7 @@ export function App() {
   // Advance to next mission day
   const handleAdvanceDay = () => {
     if (!gameState) return;
+
     const updated = nextDay(gameState);
 
     if (updated.status === 'completed' || updated.status === 'failed') {
@@ -94,6 +108,7 @@ export function App() {
         ...updated,
         scoreData: calculateScore(updated)
       };
+
       setGameState(scoredState);
       setCurrentScreen('results');
       return;
@@ -104,13 +119,19 @@ export function App() {
 
   // Abort ongoing mission
   const handleAbortMission = () => {
-    if (window.confirm('Are you sure you want to abort the current mission simulation?')) {
+    if (
+      window.confirm(
+        'Are you sure you want to abort the current mission simulation?'
+      )
+    ) {
       const abortedState = {
         ...gameState,
         status: 'failed',
         failReason: 'Mission aborted by Flight Commander directive.'
       };
+
       abortedState.scoreData = calculateScore(abortedState);
+
       setGameState(abortedState);
       setCurrentScreen('results');
     }
@@ -120,6 +141,7 @@ export function App() {
   const handlePlayAgain = () => {
     const missionId = gameState?.missionId || 'moon';
     const freshState = startMission(missionId);
+
     setGameState(freshState);
     setCurrentScreen('dashboard');
   };
@@ -136,10 +158,9 @@ export function App() {
 
   return (
     <div className="app-layout">
-      {/* Animated Deep Space Canvas / SVG Background */}
+
       <StarryBackground />
 
-      {/* Top Telemetry Header */}
       <Header
         currentScreen={currentScreen}
         onNavigateHome={handleNavigateHome}
@@ -148,8 +169,11 @@ export function App() {
         missionState={gameState}
       />
 
-      {/* Main Screen Router */}
       <main className="main-content-area">
+
+        {/* Backend Status */}
+
+
         {currentScreen === 'home' && (
           <HomeScreen onStartMission={handleGoToMissionSelect} />
         )}
@@ -186,10 +210,11 @@ export function App() {
             onChooseAnotherMission={handleChooseAnotherMission}
           />
         )}
+
       </main>
 
-      {/* Footer */}
       <Footer />
+
     </div>
   );
 }
