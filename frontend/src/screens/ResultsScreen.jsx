@@ -9,6 +9,7 @@ import { soundManager } from '../utils/soundEffects.js';
 
 export function ResultsScreen({
   state,
+  missionHistory = [],
   onPlayAgain,
   onChooseAnotherMission
 }) {
@@ -29,6 +30,26 @@ export function ResultsScreen({
         onPlayAgain={onPlayAgain}
         onChooseAnotherMission={onChooseAnotherMission}
       />
+      {missionHistory.length > 0 && (
+        <section className="mission-history-panel" aria-labelledby="mission-history-title">
+          <h3 id="mission-history-title">RECENT MISSION HISTORY</h3>
+          <ul>
+            {missionHistory.slice(0, 5).map((mission) => (
+              <li key={mission.id}>
+                <span>
+                  {mission.missionId === 'mars' ? 'Ares Mars Expedition' : 'Artemis Lunar Outpost'}
+                  {' · '}
+                  {mission.startedAt ? new Date(mission.startedAt).toLocaleDateString() : 'Date unavailable'}
+                </span>
+                <strong className={`mission-history-${mission.status}`}>
+                  {mission.status.toUpperCase()}
+                  {Number.isInteger(mission.score) ? ` · ${mission.score}/100` : ''}
+                </strong>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
     </div>
   );
 }

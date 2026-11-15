@@ -307,6 +307,34 @@ html, body {
   font-size: 0.82rem;
 }
 
+.backend-status-pill {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  white-space: nowrap;
+  color: var(--color-text-dim);
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+}
+
+.backend-status-dot {
+  width: 7px;
+  height: 7px;
+  flex: 0 0 7px;
+  border-radius: 50%;
+  background: #94a3b8;
+}
+
+.backend-status-connected .backend-status-dot {
+  background: var(--color-emerald);
+  box-shadow: 0 0 7px var(--color-emerald);
+}
+
+.backend-status-disconnected .backend-status-dot {
+  background: #ef4444;
+  box-shadow: 0 0 7px rgba(239, 68, 68, 0.6);
+}
+
 .telemetry-dot {
   width: 8px;
   height: 8px;
@@ -2262,4 +2290,48 @@ html, body {
 @keyframes slowOrbit {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
+}
+
+.mission-history-panel {
+  width: min(100% - 2rem, 1100px);
+  margin: 1.5rem auto;
+  padding: 1rem 1.25rem;
+  background: rgba(15, 23, 42, 0.88);
+  border: 1px solid rgba(56, 189, 248, 0.25);
+  border-radius: var(--radius-md);
+}
+
+.mission-history-panel h3 {
+  margin-bottom: 0.75rem;
+  color: var(--color-cyan);
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  letter-spacing: 0.08em;
+}
+
+.mission-history-panel ul {
+  display: grid;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.mission-history-panel li {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  color: var(--color-text-dim);
+  font-size: 0.85rem;
+}
+
+.mission-history-panel strong {
+  color: var(--color-cyan);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+}
+
+.mission-history-panel .mission-history-failed,
+.mission-history-panel .mission-history-abandoned {
+  color: #f87171;
 }

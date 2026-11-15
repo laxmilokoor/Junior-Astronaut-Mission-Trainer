@@ -12,7 +12,8 @@ export function Header({
   onNavigateHome,
   soundMuted,
   onToggleSound,
-  missionState
+  missionState,
+  backendStatus
 }) {
   const handleSoundClick = () => {
     const newState = !soundMuted;
@@ -67,6 +68,27 @@ export function Header({
 
         {/* Controls */}
         <div className="header-actions">
+          <div
+            className={`backend-status-pill backend-status-${backendStatus}`}
+            role="status"
+            aria-live="polite"
+            title={
+              backendStatus === 'connected'
+                ? 'FastAPI backend connected'
+                : backendStatus === 'checking'
+                  ? 'Checking FastAPI backend connection'
+                  : 'FastAPI backend unavailable; the game will continue locally'
+            }
+          >
+            <span className="backend-status-dot" />
+            <span>
+              {backendStatus === 'connected'
+                ? 'API ONLINE'
+                : backendStatus === 'checking'
+                  ? 'API CHECKING'
+                  : 'API OFFLINE'}
+            </span>
+          </div>
           <button
             type="button"
             className="sound-toggle-btn"

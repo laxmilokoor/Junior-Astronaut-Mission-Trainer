@@ -1,4 +1,29 @@
-﻿backend/venv/
-frontend/node_modules/
+# JavaScript dependencies and generated output
+node_modules/
+**/node_modules/
+frontend/dist/
+coverage/
+
+# Python environments, bytecode, and test/tool caches
+venv/
+.venv/
+**/venv/
 __pycache__/
 *.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Local settings and secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Logs and operating-system/editor files
+*.log
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
